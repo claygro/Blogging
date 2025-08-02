@@ -1,6 +1,6 @@
 import axios from "axios";
 const connection = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://blogging-backend-zv4s.onrender.com",
   withCredentials: true,
 });
 export default connection;

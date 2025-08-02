@@ -103,7 +103,7 @@ const Home = () => {
                     @{b.username[0].username}
                   </h1>
                   <img
-                    src={`http://localhost:8000${b.image}`}
+                    src={`https://blogging-backend-zv4s.onrender.com${b.image}`}
                     className="w-full h-40 object-contain"
                     alt="image"
                   />

@@ -18,7 +18,7 @@ const ProfileBlogShow = () => {
 
         <div className="w-full h-60 sm:h-80 md:h-96 overflow-hidden rounded-md">
           <img
-            src={`http://localhost:8000${blog.image}`}
+            src={`https://blogging-backend-zv4s.onrender.com${blog.image}`}
             alt="Blog"
             className="w-full h-full object-contain"
           />

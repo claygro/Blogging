@@ -22,7 +22,7 @@ const BlogShow = () => {
           </h1>
           <div className="w-full h-60 sm:h-80 md:h-96 overflow-hidden rounded-md">
             <img
-              src={`http://localhost:8000${blogs.image}`}
+              src={`https://blogging-backend-zv4s.onrender.com${blogs.image}`}
               alt="image"
               className="w-full h-full object-contain"
             />

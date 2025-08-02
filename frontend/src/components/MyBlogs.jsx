@@ -122,7 +122,7 @@ const MyBlogs = () => {
                     </div>
 
                     <img
-                      src={`http://localhost:8000${b.image}`}
+                      src={`https://blogging-backend-zv4s.onrender.com${b.image}`}
                       alt="blog"
                       className="w-full h-48 object-contain mt-3"
                     />
