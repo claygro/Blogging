@@ -66,7 +66,7 @@ const Home = () => {
                     navigate("/blogShow", { state: { b } });
                   }}
                   key={b._id}
-                  className="bg-white h-90 shadow-md rounded-lg p-4"
+                  className="bg-white h-auto shadow-md rounded-lg p-4"
                 >
                   <div className="relative">
                     <div className="flex justify-end items-center  ">
