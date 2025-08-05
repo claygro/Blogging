@@ -17,6 +17,7 @@ const MenuBarTextEditor = ({ editor }) => {
     <div className="flex flex-wrap p-2 justify-around items-center">
       <div className="flex flex-wrap gap-2">
         <button
+          title="H1"
           type="button"
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
