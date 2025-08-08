@@ -1,4 +1,24 @@
+import connection from "../../config/Connection";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const About = () => {
+  const navigate = useNavigate();
+  const redirectToLogin = async () => {
+    try {
+      const response = await connection.get("/blog/currentuser");
+      const decode = jwtDecode(response.data);
+      if (!decode) {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log(`error in redirecting to login page ${err}`);
+      navigate("/login");
+    }
+  };
+  useEffect(() => {
+    redirectToLogin();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="max-w-4xl bg-white rounded-xl shadow-lg p-8 sm:p-12">

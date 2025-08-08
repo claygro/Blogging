@@ -12,6 +12,7 @@ import BlogProvider from "./components/BlogProvider";
 import Login from "./components/Login";
 import BlogShow from "./components/BlogShow";
 import ProfileBlogShow from "./components/ProfileBlogShow";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path="settings" element={<Settings />} />
               </Route>
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </BlogProvider>

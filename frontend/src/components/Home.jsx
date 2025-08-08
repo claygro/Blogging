@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import SearchBlog from "./SearchBlog";
+// import { jwtDecode } from "jwt-decode";
 const Home = () => {
   const { blog, getBlog } = useContext(BlogContext);
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -19,6 +20,23 @@ const Home = () => {
       window.location.reload();
       navigate("/");
     }
+  }, []);
+  const redirectToLogin = async () => {
+    try {
+      const response = await connection.get("/blog/currentuser");
+      const decode = jwtDecode(response.data);
+      if (!decode) {
+        navigate("/login");
+      } else {
+        setCurrentUserId(decode.userid);
+      }
+    } catch (err) {
+      console.log(`error in redirecting to login page ${err}`);
+      navigate("/login");
+    }
+  };
+  useEffect(() => {
+    redirectToLogin();
   }, []);
   const handleDelete = async (id) => {
     try {

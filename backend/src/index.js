@@ -10,7 +10,6 @@ const app = express();
 app.use(
   cors({
     origin: "https://blogging-frontend-cjgg.onrender.com",
-
     credentials: true,
   })
 );

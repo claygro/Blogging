@@ -122,17 +122,13 @@ class UserController {
     try {
       const userEmail = await UserModel.findOne({ email: email });
 
-      const userPassword = bcrypt.compare(
-        password,
-        userEmail.password,
-        function (err, result) {
-          if (result) {
-            res.status(200).json({ message: "welcome" });
-          } else {
-            res.status(404).json({ message: "something went wrong" });
-          }
+      bcrypt.compare(password, userEmail.password, function (err, result) {
+        if (result) {
+          res.status(200).json({ message: "welcome" });
+        } else {
+          res.status(404).json({ message: "something went wrong" });
         }
-      );
+      });
       let auth_token = jwt.sign(
         { email: email, userid: userEmail._id },
         process.env.JWT_SECRET_TOKEN

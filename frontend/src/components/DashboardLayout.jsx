@@ -1,7 +1,26 @@
 // src/pages/DashboardLayout.jsx
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import connection from "../../config/Connection";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 
 const DashboardLayout = () => {
+  const navigate = useNavigate();
+  const redirectToLogin = async () => {
+    try {
+      const response = await connection.get("/blog/currentuser");
+      const decode = jwtDecode(response.data);
+      if (!decode) {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log(`error in redirecting to login page ${err}`);
+      navigate("/login");
+    }
+  };
+  useEffect(() => {
+    redirectToLogin();
+  }, []);
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}

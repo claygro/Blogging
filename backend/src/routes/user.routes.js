@@ -8,7 +8,7 @@ const router = Router();
 const upload = multer({ storage: storage });
 const userController = new UserController();
 router.post("/signup", userController.signup);
-router.get("/getBlog", userController.getBlog);
+router.get("/getBlog", loginMiddlware, userController.getBlog);
 router.post(
   "/postBlog",
   loginMiddlware,
