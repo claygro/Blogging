@@ -24,5 +24,5 @@ router.post("/comment", loginMiddlware, userController.comment);
 router.get("/getComment/:id", loginMiddlware, userController.getComment);
 router.delete("/deleteComment/:id", userController.deleteComment);
 router.get("/search", userController.search);
-router.get("/like/:id", loginMiddlware, userController.like);
+router.post("/like/:id", loginMiddlware, userController.like);
 export default router;
