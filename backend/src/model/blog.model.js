@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const blogSchema = new mongoose.Schema(
   {
     username: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
@@ -6,6 +7,7 @@ const blogSchema = new mongoose.Schema(
     blogs: String,
     image: String,
     comment: [{ type: mongoose.Schema.Types.ObjectId, ref: "comment" }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   },
   {
     timestamps: true,

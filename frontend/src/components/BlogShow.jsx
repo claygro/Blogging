@@ -2,38 +2,63 @@ import { useLocation, useNavigate } from "react-router-dom";
 import connection from "../../config/Connection";
 import Comments from "./Comments";
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // fixed import for jwtDecode
+import { FaHeart } from "react-icons/fa";
 
 const BlogShow = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const blogs = location.state?.b;
+
   const [showComment, setShowComment] = useState(false);
+  const [like, setLike] = useState(null);
+  const [isLike, setIsLike] = useState(false);
+  const [currUserId, setCurrUserId] = useState(null);
 
   const handleShowComment = () => {
     setShowComment(!showComment);
   };
 
-  const redirectToLogin = async () => {
-    try {
-      const response = await connection.get("/blog/currentuser");
-      const decode = jwtDecode(response.data);
-      if (!decode || !blogs) {
+  useEffect(() => {
+    const redirectToLoginAndFetchLikes = async () => {
+      if (!blogs) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        // Get current user
+        const response = await connection.get("/blog/currentuser");
+        const decode = jwtDecode(response.data);
+        setCurrUserId(decode.userid);
+
+        // Fetch likes for this blog immediately after getting user ID
+        const likeResponse = await connection.get(`/blog/like/${blogs._id}`);
+        setLike(likeResponse.data);
+        setIsLike(likeResponse.data.likes.includes(decode.userid));
+      } catch (err) {
+        console.log(`error in redirecting to login page ${err}`);
         navigate("/login");
       }
-    } catch (err) {
-      console.log(`error in redirecting to login page ${err}`);
-      navigate("/login"); // fallback redirect
+    };
+
+    redirectToLoginAndFetchLikes();
+  }, [blogs, navigate]);
+
+  const onHandleLike = async (id) => {
+    try {
+      // Ideally change this endpoint to POST for toggling likes on backend
+      const response = await connection.get(`/blog/like/${id}`);
+      setLike(response.data);
+      if (currUserId && response.data.likes.includes(currUserId)) {
+        setIsLike(true);
+      } else {
+        setIsLike(false);
+      }
+    } catch (error) {
+      console.log(`Error in like ${error}`);
     }
   };
-
-  useEffect(() => {
-    if (!blogs) {
-      navigate("/login"); // or show a 404 page
-    } else {
-      redirectToLogin();
-    }
-  }, [blogs]);
 
   return (
     <section className="min-h-screen bg-gray-100 py-10">
@@ -68,14 +93,32 @@ const BlogShow = () => {
         </div>
       </div>
 
-      {/* Comment button */}
-      <div className="w-full mt-4 sm:max-w-4xl sm:rounded-lg sm:shadow-md sm:mx-auto sm:p-6 p-4 bg-gray-400">
+      {/* Comment, like button */}
+      <div className="w-full flex items-center justify-between mt-4 sm:max-w-4xl sm:rounded-lg sm:shadow-md sm:mx-auto sm:p-6 p-4 bg-gray-400">
         <button
           className="bg-white shadow-lg px-4 py-2 rounded-md cursor-pointer"
           onClick={handleShowComment}
         >
           Comment
         </button>
+        <div className="flex items-center gap-2">
+          <p>{like?.likes.length || 0}</p>
+          <button
+            className="cursor-pointer"
+            onClick={() => onHandleLike(blogs?._id)}
+            aria-label="Toggle like"
+          >
+            <FaHeart
+              className={isLike ? "text-red-500 text-xl" : "text-white text-xl"}
+            />
+          </button>
+        </div>
+        {/* <button
+          className="bg-white shadow-lg px-4 py-2 rounded-md cursor-pointer"
+          onClick={handleShowComment}
+        >
+          Share
+        </button> */}
       </div>
     </section>
   );

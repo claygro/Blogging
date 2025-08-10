@@ -83,7 +83,7 @@ const MyBlogs = () => {
                 {blog.blogs.map((b) => (
                   <div
                     key={b._id}
-                    className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200"
+                    className="bg-white py-4 px-3 rounded-2xl shadow-md overflow-hidden border border-gray-200"
                     onClick={() => {
                       navigate("/profileBlogShow", { state: { b } });
                     }}
@@ -133,8 +133,8 @@ const MyBlogs = () => {
                       </h1>
                       <p className="text-gray-700">
                         {b.blogs
-                          ? b.blogs.replace(/<[^>]+>/g, "").slice(0, 300) +
-                            "..."
+                          ? b.blogs.replace(/<[^>]+>/g, "").slice(0, 20) +
+                            "......."
                           : ""}
                       </p>
                     </div>
@@ -144,9 +144,9 @@ const MyBlogs = () => {
             </div>
           ))
         ) : (
-          <h1 className="text-center text-gray-500 text-xl">
-            No blogs to show
-          </h1>
+          <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
         )}
       </div>
     </>

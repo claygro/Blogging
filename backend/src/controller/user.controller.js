@@ -258,6 +258,22 @@ class UserController {
       console.log(`Error in searching ${error}`);
     }
   }
+  async like(req, res) {
+    const { id } = req.params;
+    try {
+      const blog = await BlogModel.findById(id).populate("username");
+      if (blog.likes.indexOf(req.user.userid) === -1) {
+        blog.likes.push(req.user.userid);
+      } else {
+        blog.likes.splice(blog.likes.indexOf(req.user.userid), 1);
+      }
+      await blog.save();
+      res.status(200).json(blog);
+    } catch (err) {
+      console.log(`Error in like ${err}`);
+      res.status(404).json({ message: "like is not working" });
+    }
+  }
 }
 export { storage };
 export default UserController;

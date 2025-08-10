@@ -8,19 +8,33 @@ import { jwtDecode } from "jwt-decode";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import SearchBlog from "./SearchBlog";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 // import { jwtDecode } from "jwt-decode";
 const Home = () => {
   const { blog, getBlog } = useContext(BlogContext);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [threeDotsClick, setThreeDotsClick] = useState(false);
   const [filteredBlogs, setFilteredBlogs] = useState(null);
+  const [timeUpdater, setTimeUpdater] = useState(0);
   const navigate = useNavigate();
+
+  dayjs.extend(relativeTime);
   useEffect(() => {
     if (localStorage.getItem("isLogin") === "false") {
       window.location.reload();
       navigate("/");
     }
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeUpdater((prev) => prev + 1); // trigger re-render
+    }, 60000); // update every 1 minute
+
+    return () => clearInterval(interval); // cleanup
+  }, []);
+
   const redirectToLogin = async () => {
     try {
       const response = await connection.get("/blog/currentuser");
@@ -68,76 +82,86 @@ const Home = () => {
   const handeThreeDotsClick = (id) => {
     setThreeDotsClick((prevId) => (prevId === id ? null : id));
   };
+
   return (
     <>
       <div>
         <SearchBlog setFilteredBlogs={setFilteredBlogs} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        {(filteredBlogs ? filteredBlogs.length : blog.length) > 0
-          ? (filteredBlogs || blog)
-              .slice()
-              .reverse()
-              .map((b) => (
-                <div
-                  onClick={() => {
-                    navigate("/blogShow", { state: { b } });
-                  }}
-                  key={b._id}
-                  className="bg-white h-auto shadow-md rounded-lg p-4"
-                >
-                  <div className="relative">
-                    <div className="flex justify-end items-center  ">
-                      <button
-                        className="text-xl cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handeThreeDotsClick(b._id);
-                        }}
-                      >
-                        <BsThreeDotsVertical />
-                      </button>
-                    </div>
-                    <div
-                      className={
-                        currentUserId === b.username[0]._id &&
-                        threeDotsClick === b._id
-                          ? " flex absolute bg-white shadow-md px-3 py-4 right-0 "
-                          : "hidden"
-                      }
+        {(filteredBlogs ? filteredBlogs.length : blog.length) > 0 ? (
+          (filteredBlogs || blog)
+            .slice()
+            .reverse()
+            .map((b) => (
+              <div
+                onClick={() => {
+                  navigate("/blogShow", { state: { b } });
+                }}
+                key={b._id}
+                className="bg-white hover:shadow-lg hover:scale-[1.04] cursor-pointer transition-all h-auto shadow-md rounded-lg p-4"
+              >
+                <div className="relative">
+                  <div className="flex justify-end items-center  ">
+                    <button
+                      className="text-xl cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handeThreeDotsClick(b._id);
+                      }}
                     >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevents navigation
-                          handleDelete(b._id);
-                        }}
-                        className="text-red-800 cursor-pointer"
-                      >
-                        {currentUserId ? <MdDeleteOutline /> : ""}
-                      </button>
-                    </div>
+                      <BsThreeDotsVertical />
+                    </button>
                   </div>
-                  <h1 className="text-sm text-zinc-600">
-                    @{b.username[0].username}
-                  </h1>
-                  <img
-                    src={`https://blogging-backend-zv4s.onrender.com${b.image}`}
-                    className="w-full h-40 object-contain"
-                    alt="image"
-                  />
-                  {/* {console.log(`http://localhost:8000${b.image}`)} */}
-                  <h2 className="text-xl font-bold mb-2">{b.title}</h2>
-                  <p className="text-gray-700">
-                    {b.blogs
-                      ? b.blogs.replace(/<[^>]+>/g, "").slice(0, 300) + "..."
-                      : ""}
-                  </p>
-                  <button className="text-blue-700 hover:text-blue-600 active:text-blue-800 cursor-pointer">
-                    Read blog
-                  </button>
+                  <div
+                    className={
+                      currentUserId === b.username[0]._id &&
+                      threeDotsClick === b._id
+                        ? " flex absolute bg-white shadow-md px-3 py-4 right-0 "
+                        : "hidden"
+                    }
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevents navigation
+                        handleDelete(b._id);
+                      }}
+                      className="text-red-800 cursor-pointer"
+                    >
+                      {currentUserId ? <MdDeleteOutline /> : ""}
+                    </button>
+                  </div>
                 </div>
-              ))
-          : "No blog to show"}
+                <h1 className="text-sm text-zinc-600">
+                  @{b.username[0].username}
+                </h1>
+                <img
+                  src={`https://blogging-backend-zv4s.onrender.com${b.image}`}
+                  className="w-full h-40 object-contain"
+                  alt="image"
+                />
+                {/* {console.log(`http://localhost:8000${b.image}`)} */}
+                <h2 className="text-xl font-bold mb-2">{b.title}</h2>
+                <p className="text-gray-700">
+                  {b.blogs
+                    ? b.blogs.replace(/<[^>]+>/g, "").slice(0, 20) + "..."
+                    : ""}
+                </p>
+                <button className="text-blue-700 hover:text-blue-600 active:text-blue-800 cursor-pointer">
+                  Read blog
+                </button>
+                <div>
+                  <p className="text-zinc-500">
+                    {dayjs(b.createdAt).fromNow()}
+                  </p>
+                </div>
+              </div>
+            ))
+        ) : (
+          <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
       </div>
     </>
   );
